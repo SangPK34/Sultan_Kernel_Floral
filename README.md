@@ -13,37 +13,42 @@ sudo apt install python2 lz4 liblz4-tool zip -y
 ```bash
 sudo ln -s /usr/bin/python3 /usr/bin/python2
 ```
-
+Check: *`python2 --version`* xem nó có hiện ra Python 3.x.x không.
 ---
 
 ## 2. Chuẩn bị Toolchain & Source
-
+Tạo thư mục làm việc:
 ```bash
 mkdir -p ~/Sangdz/workspace/toolchains
-
 cd ~/Sangdz/workspace
-
+```
+Clone repo:
+```bash
 git clone --depth=1 https://github.com/SangPK34/Sultan_Kernel_Floral.git
+```
 
+Thiết lập tools:
+```bash
 cd ~/Sangdz/workspace/toolchains
-
+#Tải và dọn:
 curl -L -O "https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz"
-tar -xf arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
-rm arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
 
 wget -U "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
+
+tar -xf arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
+rm arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu.tar.xz
 tar -xf arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
 rm arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-linux-gnueabihf.tar.xz
-
+```
+# Thiết lập biến môi trường (PATH này trỏ thẳng tới toolchain vừa giải nén)
+```bash
 cd ~/Sangdz/workspace/Sultan_Kernel_Floral
 
-# Thiết lập biến môi trường (Lưu ý: PATH này trỏ thẳng tới toolchain vừa giải nén)
 export ARCH=arm64
 export CROSS_COMPILE=~/Sangdz/workspace/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
 export CROSS_COMPILE_ARM32=~/Sangdz/workspace/toolchains/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-
 
 # Kiểm tra xem "thằng đệ" GCC đã sẵn sàng chưa
-
 ${CROSS_COMPILE}gcc --version
 ```
 ---
@@ -60,15 +65,10 @@ make O=out -j$(nproc) Image.lz4
 ---
 
 ## 4. Đóng gói bằng AnyKernel3
-
+Chui vào folder chứa sẵn Anykernel xóa lõi cũ, nhét lõi mới rồi đóng gói
 ```bash
-# Chui vào thư mục AnyKernel (Sultan-R-20220616)
 cd ~/Sangdz/workspace/Sultan_Kernel_Floral/Sultan-R-20220616
-
-# Xóa lõi cũ, copy lõi mới vừa build
 rm Image.lz4
 cp ~/Sangdz/workspace/Sultan_Kernel_Floral/out/arch/arm64/boot/Image.lz4 .
-
-# Đóng gói zip
-zip -r9 ../Custom-Kernel-CucThan.zip *
+zip -r9 ../Custom-Kernel-CucThan_4XL.zip *
 ```
